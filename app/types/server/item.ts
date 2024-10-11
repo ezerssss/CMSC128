@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { LogisticsEnum, ServicesEnum } from "../../enums/services";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase-admin/firestore";
 import { BoardStatusEnum } from "@/app/enums/board";
 import { PaymentStatusEnum } from "@/app/enums/payment";
 
@@ -21,14 +21,3 @@ export const OrderSchema = z.object({
   dateModified: z.instanceof(Timestamp),
   dateFinished: z.instanceof(Timestamp).nullable(),
 });
-
-export type OrderType = z.infer<typeof OrderSchema>;
-
-export interface LaundryCardInterface {
-  id: string;
-  name: string;
-  address?: string;
-  bag: string;
-  kilos: number;
-  services: ServicesEnum[];
-}

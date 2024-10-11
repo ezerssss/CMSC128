@@ -49,9 +49,7 @@ function LaundryCard({
                 className="mt-1 flex-shrink-0"
               />
               <p className="max-h-[40px] overflow-hidden text-ellipsis text-[14px] text-slate-600">
-                {item.address ?? "-"} Lorem ipsum, dolor sit amet consectetur
-                adipisicing elit. Sit numquam totam nihil maxime debitis omnis
-                praesentium natus neque, sapiente amet?
+                {item.address ?? "-"}
               </p>
             </div>
             <div className="flex items-start gap-2">

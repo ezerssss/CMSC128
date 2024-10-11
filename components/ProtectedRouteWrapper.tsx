@@ -7,16 +7,22 @@ import clientAuth from "@/app/firebase/clientAuth";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import useShopID from "@/app/store";
+import clientDb from "@/app/firebase/clientDB";
+import { UserDataType } from "@/app/types/client/auth";
+import { collection, doc, getDoc } from "firebase/firestore";
+
+const usersCollectionRef = collection(clientDb, "users");
 
 interface PropsInterface {
   children: React.ReactNode;
   delay?: boolean;
-  admin?: boolean;
 }
 
 function ProtectedRouteWrapper(props: PropsInterface) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { setShopID } = useShopID();
 
   const path = usePathname();
 
@@ -24,6 +30,13 @@ function ProtectedRouteWrapper(props: PropsInterface) {
     return onAuthStateChanged(clientAuth, async (user) => {
       if (props.delay) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      if (user) {
+        const userDocumentRef = doc(usersCollectionRef, user.uid);
+        const userData = (await getDoc(userDocumentRef)).data() as UserDataType;
+
+        setShopID(userData.shopID);
       }
 
       setIsAuthenticated(!!user);
