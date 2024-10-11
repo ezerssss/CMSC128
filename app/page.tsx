@@ -1,9 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import Board from "@/components/kanban";
 import React from "react";
 import ProtectedRouteWrapper from "@/components/ProtectedRouteWrapper";
+import useShopID from "./store";
 
 function HomePage() {
+  const { shopID } = useShopID();
+  console.log(shopID);
+
   return (
     <ProtectedRouteWrapper delay>
       <main className="h-full w-screen p-5">

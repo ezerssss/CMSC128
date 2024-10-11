@@ -1,6 +1,9 @@
-export const enum ServicesEnum {
+export enum ServicesEnum {
   WASH = "Wash",
   DRY = "Dry",
-  DELIVER = "Deliver",
-  PICKUP = "Pickup",
+}
+
+export enum LogisticsEnum {
+  DELIVERY = "Delivery",
+  PICK_UP = "Pick-up",
 }
