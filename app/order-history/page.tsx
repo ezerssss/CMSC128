@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Table } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import OrderHistoryTable from './OrderHistoryTable'; 
+import SearchFilterDropdown from './SearchFilterDropdown';
 import { X } from "lucide-react";
-
-
 
 const orderData = [
   {
@@ -141,21 +140,6 @@ const tableHeaders = [
   "Order ID", "Name", "Address", "Service Type", "Bag", "Weight (kg)", "Logistics", "Status", "Payment Status", "Date"
 ];
 
-// Color based on status
-const getBadgeColor = (status: string) => {
-  switch (status) {
-    case "Completed":
-    case "Paid":
-      return "bg-green-100 text-green-700";
-    case "In progress":
-      return "bg-blue-100 text-blue-700";
-    case "Unpaid":
-    case "To do":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-};
 
 // Main
 export default function OrderHistory() {
@@ -221,43 +205,24 @@ export default function OrderHistory() {
           className="border border-gray-300 px-3 py-2 rounded-lg shadow-sm w-full"
         />
 
+        {/* Search Filter Dropdown */}
         <div className="relative">
-          <select 
-            onChange={handleFilterChange}
-            className="border border-gray-300 px-3 py-2 rounded-lg shadow-sm w-full"
-            style={{ backgroundColor: '#DBEAFF', color: 'black' }} 
-          >
-            {/* Dropdown for filters */}
-            <option value="" className="text-black">Select Filter</option>
-            <optgroup label="Service Types">
-              {serviceTypes.map((type) => (
-                <option key={type} value={type} className="text-black">{type}</option>
-              ))}
-            </optgroup>
-            <optgroup label="Logistics">
-              {logisticsOptions.map((logistics) => (
-                <option key={logistics} value={logistics} className="text-black">{logistics}</option>
-              ))}
-            </optgroup>
-            <optgroup label="Order Statuses">
-              {statuses.map((status) => (
-                <option key={status} value={status} className="text-black">{status}</option>
-              ))}
-            </optgroup>
-            <optgroup label="Payment Statuses">
-              {paymentStatuses.map((paymentStatus) => (
-                <option key={paymentStatus} value={paymentStatus} className="text-black">{paymentStatus}</option>
-              ))}
-            </optgroup>
-          </select>
+        <SearchFilterDropdown 
+          handleFilterChange={handleFilterChange}
+          serviceTypes={serviceTypes}
+          logisticsOptions={logisticsOptions}
+          statuses={statuses}
+          paymentStatuses={paymentStatuses}
+        />
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mt-4">
+        
         {/* Filter badges */}
         {serviceFilter.map((filterType, index) => (
           <div
-            key={index}
+            key={filterType}
             className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-gray-700"
           >
             {filterType}
@@ -313,67 +278,18 @@ export default function OrderHistory() {
         )}
 
         {/* Clear all filters Button */}
-        <button
+        <Button
           onClick={clearFilters}
           disabled={!filter && serviceFilter.length === 0 && !logisticsFilter && !statusFilter && !paymentStatusFilter}
-          className={`ml-2 px-4 py-2 rounded-lg transition-all ${filter || serviceFilter.length > 0 || logisticsFilter || statusFilter || paymentStatusFilter ? "bg-[#9CC0D9] text-white hover:bg-blue-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-        >
+          className={`ml-2 ${filter || serviceFilter.length > 0 || logisticsFilter || statusFilter || paymentStatusFilter ? "bg-[#DBEAFF] text-gray-800 hover:bg-blue-300" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          >
           Clear All
-        </button>
+        </Button>
       </div>
 
       <div className="border border-gray-300 shadow-lg rounded-2xl overflow-hidden mt-6 p-4">
-
-      {/* Table of Orders */}
-      <Table className="min-w-full table-auto rounded-2xl overflow-hidden">
-
-        {/* Table Headers */}
-        <thead
-          className="text-left text-gray-700 uppercase tracking-wide text-sm font-semibold rounded-t-2xl"
-          style={{ backgroundColor: '#DBEAFF' }}
-        >
-          <tr className="border-b border-gray-200">
-            {tableHeaders.map((header, index) => (
-              <th key={index} className="py-2 px-4">{header}</th>
-            ))}
-          </tr>
-        </thead>
-
-        {/* Table Body */}
-        <tbody className="text-gray-600">
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order, index) => ( //Map for filters
-              <tr key={index} className="border-b border-gray-200">
-
-                {/* Order Details */}
-                <td className="py-2 px-4">{order.orderId}</td>
-                <td className="py-2 px-4">{order.name}</td>
-                <td className="py-2 px-4">{order.address}</td>
-                <td className="py-2 px-4">{order.serviceType}</td>
-                <td className="py-2 px-4">{order.bag}</td>
-                <td className="py-2 px-4">{order.weight}</td>
-                <td className="py-2 px-4">{order.logistics}</td>
-                <td className="py-2 px-4">
-
-                  <Badge className={getBadgeColor(order.status)}>{order.status}</Badge>
-                </td>
-                <td className="py-2 px-4">
-                  <Badge className={getBadgeColor(order.paymentStatus)}>{order.paymentStatus}</Badge>
-                </td>
-                <td className="py-2 px-4">{order.date}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-
-              {/* Case of 0 orders */}
-              <td colSpan={tableHeaders.length} className="text-center py-4">
-                No orders found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+      {/* Table */}
+      <OrderHistoryTable orders={filteredOrders} />
     </div>
 
     </div>
