@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import OrderHistoryTable from './OrderHistoryTable'; 
 import SearchFilterDropdown from './SearchFilterDropdown';
 import { X } from "lucide-react";
+import ProtectedRouteWrapper from '@/components/ProtectedRouteWrapper';
+
+
 
 const orderData = [
   {
@@ -193,8 +196,9 @@ export default function OrderHistory() {
   }, [filter, serviceFilter, logisticsFilter, statusFilter, paymentStatusFilter]);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Order History</h1>
+    <ProtectedRouteWrapper>
+    <div>
+        <h1 className="text-2xl font-bold text-[#173563] p-4">Order History</h1>
 
       {/* Search and filter dropdown container */}
       <div className="flex items-center mb-6 gap-4">
@@ -293,5 +297,6 @@ export default function OrderHistory() {
     </div>
 
     </div>
+    </ProtectedRouteWrapper>
   );
 }
