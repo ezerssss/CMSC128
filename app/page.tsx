@@ -7,7 +7,6 @@ import useShopID from "./store";
 
 function HomePage() {
   const { shopID } = useShopID();
-  console.log(shopID);
 
   return (
     <ProtectedRouteWrapper delay>
