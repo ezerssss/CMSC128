@@ -12,11 +12,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  LoginFormSchema,
-  LoginFormType,
-  UserDataType,
-} from "../types/client/auth";
+import { LoginFormSchema, LoginFormType } from "../types/client/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -34,8 +30,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import clientAuth from "../firebase/clientAuth";
 import { Loader2Icon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import useShopID from "../store";
-import { doc, getDoc } from "firebase/firestore";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
