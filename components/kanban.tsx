@@ -93,7 +93,7 @@ function Column(props: ColumnPropsInterface) {
 
   return (
     <div className="h-full flex-1 space-y-8 text-black">
-      <header className="rounded-xl bg-[#D8EAF9] p-6">
+      <header className="rounded-xl bg-[#D8EAF9] p-6">  {/* */}
         <p className="text-large font-semibold">{title}</p>
         <p className="text-small text-gray-500">
           {items.length} items {max && `/ ${max} (Max: ${max})`}
@@ -105,7 +105,7 @@ function Column(props: ColumnPropsInterface) {
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className="h-[470px] overflow-auto rounded-xl bg-[#D8EAF9] p-3"
+            className="h-[470px] overflow-auto rounded-xl bg-[#c8d3dc50] p-3" // bg of tasks
           >
             {items.map((item, index) => (
               <LaundryCard item={item} index={index} key={item.id} />
