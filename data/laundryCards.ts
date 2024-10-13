@@ -1,6 +1,7 @@
 import { BoardStatusEnum } from "@/app/enums/board";
 import { PaymentStatusEnum } from "@/app/enums/payment";
 import { LogisticsEnum, ServicesEnum } from "@/app/enums/services";
+import { TrackingStatusEnum } from "@/app/enums/tracking";
 import { OrderType } from "@/app/types/client/item";
 import { Timestamp } from "firebase/firestore";
 
@@ -17,7 +18,7 @@ export const tempLaundryCardData: OrderType[] = [
     price: 100,
     paymentStatus: PaymentStatusEnum.UNPAID,
     boardStatus: BoardStatusEnum.TO_BE_PICKED_UP,
-    progressText: "In progress",
+    trackingStatus: TrackingStatusEnum.CONFIRMED_ORDER,
     dateCreated: Timestamp.now(),
     dateModified: Timestamp.now(),
     dateFinished: null,

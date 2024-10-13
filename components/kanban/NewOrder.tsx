@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,8 +31,19 @@ import {
   PaymentOptions,
   ServicesOptions,
 } from "@/app/constants/options";
+import { Loader2 } from "lucide-react";
+import useShopID from "@/app/store";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error";
+import { NewOrderRequestType } from "@/app/types/server/item";
+import useUser from "@/app/hooks/useUser";
 
 function NewOrder() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useUser();
+  const { shopID } = useShopID();
+
   const form = useForm<NewOrderFormType>({
     resolver: zodResolver(NewOrderFormSchema),
     defaultValues: {
@@ -44,14 +57,49 @@ function NewOrder() {
       paymentStatus: PaymentStatusEnum.UNPAID,
       boardStatus: BoardStatusEnum.TO_BE_PICKED_UP,
     },
+    disabled: isLoading,
   });
 
-  function onSubmit(values: NewOrderFormType) {
-    console.log(values);
+  async function onSubmit(values: NewOrderFormType) {
+    if (!shopID || !user) {
+      // Should not happen, but just in case.
+      toast.error("Necessary preconditions failed.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const newOrderRequest: NewOrderRequestType = {
+        ...values,
+        userID: user.uid,
+        shopID,
+      };
+
+      const res = await fetch("/api/order/new", {
+        method: "POST",
+        body: JSON.stringify(newOrderRequest),
+      });
+
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+
+      const { message } = await res.json();
+
+      form.reset();
+      toast.success(message);
+      setIsOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
         <Button className="mt-5">New order</Button>
       </DialogTrigger>
@@ -226,7 +274,9 @@ function NewOrder() {
                 />
               </div>
             </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit">
+              {isLoading ? <Loader2 className="animate-spin" /> : "Submit"}
+            </Button>
           </form>
         </Form>
       </DialogContent>

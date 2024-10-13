@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { StatusCodes } from "http-status-codes";
-import serverDb from "@/app/firebase/db";
+import serverDb from "@/app/firebase/serverDB";
 import { Timestamp } from "firebase-admin/firestore";
 import { getErrorMessage } from "@/lib/error";
 import { SignUpRequestSchema, UserDataType } from "@/app/types/server/auth";
@@ -15,10 +15,10 @@ export async function POST(request: NextRequest) {
   const { data, error } = SignUpRequestSchema.safeParse(body);
 
   if (error) {
-    console.error(error);
+    console.error(error.message);
     return NextResponse.json(
-      { message: error },
-      { status: StatusCodes.BAD_REQUEST }
+      { message: error.message },
+      { status: StatusCodes.BAD_REQUEST, statusText: error.message }
     );
   }
 

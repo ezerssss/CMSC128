@@ -100,6 +100,7 @@ export default function SignupPage() {
       toast.success(message);
       router.push("/login");
     } catch (error) {
+      console.error(error);
       toast.error(getErrorMessage(error));
 
       if (user) {

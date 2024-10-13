@@ -57,7 +57,7 @@ export default function Board() {
   const [orders, setOrders] = useState<BoardDataInterface>({
     "to-be-picked-up": tempLaundryCardData,
     idle: [],
-    cleaning: [],
+    "in-progress": [],
     "to-be-delivered": [],
     "waiting-for-customer": [],
     done: [],
@@ -75,7 +75,11 @@ export default function Board() {
             items={orders["to-be-picked-up"]}
           />
           <Column title="Idle" id="idle" items={orders["idle"]} />
-          <Column title="Cleaning" id="cleaning" items={orders["cleaning"]} />
+          <Column
+            title="In Progress"
+            id="in-progress"
+            items={orders["in-progress"]}
+          />
           <Column
             title="To be Delivered"
             id="to-be-delivered"
