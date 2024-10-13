@@ -3,12 +3,9 @@
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import OrderHistoryTable from './OrderHistoryTable'; 
-import SearchFilterDropdown from './SearchFilterDropdown';
+import OrderHistoryTable from "./OrderHistoryTable";
+import SearchFilterDropdown from "./SearchFilterDropdown";
 import { X } from "lucide-react";
-import ProtectedRouteWrapper from '@/components/ProtectedRouteWrapper';
-
-
 
 const orderData = [
   {
@@ -133,21 +130,28 @@ const orderData = [
   },
 ];
 
-
 const serviceTypes = ["Dry Wash", "Folded", "Press Only"];
 const logisticsOptions = ["Pick-up", "Delivery"];
 const statuses = ["In progress", "Completed", "To do"];
 const paymentStatuses = ["Unpaid", "Paid"];
 
 const tableHeaders = [
-  "Order ID", "Name", "Address", "Service Type", "Bag", "Weight (kg)", "Logistics", "Status", "Payment Status", "Date"
+  "Order ID",
+  "Name",
+  "Address",
+  "Service Type",
+  "Bag",
+  "Weight (kg)",
+  "Logistics",
+  "Status",
+  "Payment Status",
+  "Date",
 ];
-
 
 // Main
 export default function OrderHistory() {
-  // Search 
-  const [filter, setFilter] = useState<string>(""); 
+  // Search
+  const [filter, setFilter] = useState<string>("");
   // Service Type Filter
   const [serviceFilter, setServiceFilter] = useState<string[]>([]);
   // Logistics Filter
@@ -155,7 +159,9 @@ export default function OrderHistory() {
   // Status Filter
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   // Payment Status Filter
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string | null>(null);
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string | null>(
+    null
+  );
 
   // Filter
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -163,7 +169,7 @@ export default function OrderHistory() {
     if (value === "clear") {
       clearFilters();
     } else if (serviceTypes.includes(value)) {
-      setServiceFilter([value]); 
+      setServiceFilter([value]);
     } else if (logisticsOptions.includes(value)) {
       setLogisticsFilter(value);
     } else if (statuses.includes(value)) {
@@ -184,54 +190,73 @@ export default function OrderHistory() {
 
   // Memoized filter
   const filteredOrders = useMemo(() => {
-    return orderData.filter(order => {
-      const matchesName = order.name.toLowerCase().includes(filter.toLowerCase());
-      const matchesServiceType = serviceFilter.length === 0 || serviceFilter.includes(order.serviceType);
-      const matchesLogistics = !logisticsFilter || order.logistics === logisticsFilter;
+    return orderData.filter((order) => {
+      const matchesName = order.name
+        .toLowerCase()
+        .includes(filter.toLowerCase());
+      const matchesServiceType =
+        serviceFilter.length === 0 || serviceFilter.includes(order.serviceType);
+      const matchesLogistics =
+        !logisticsFilter || order.logistics === logisticsFilter;
       const matchesStatus = !statusFilter || order.status === statusFilter;
-      const matchesPaymentStatus = !paymentStatusFilter || order.paymentStatus === paymentStatusFilter;
+      const matchesPaymentStatus =
+        !paymentStatusFilter || order.paymentStatus === paymentStatusFilter;
 
-      return matchesName && matchesServiceType && matchesLogistics && matchesStatus && matchesPaymentStatus;
+      return (
+        matchesName &&
+        matchesServiceType &&
+        matchesLogistics &&
+        matchesStatus &&
+        matchesPaymentStatus
+      );
     });
-  }, [filter, serviceFilter, logisticsFilter, statusFilter, paymentStatusFilter]);
+  }, [
+    filter,
+    serviceFilter,
+    logisticsFilter,
+    statusFilter,
+    paymentStatusFilter,
+  ]);
 
   return (
-    <ProtectedRouteWrapper>
     <div>
-        <h1 className="text-2xl font-bold text-[#173563] p-4">Order History</h1>
+      <h1 className="p-4 text-2xl font-bold text-[#173563]">Order History</h1>
 
       {/* Search and filter dropdown container */}
-      <div className="flex items-center mb-6 gap-4">
+      <div className="mb-6 flex items-center gap-4">
         <Input
           placeholder="Search"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="border border-gray-300 px-3 py-2 rounded-lg shadow-sm w-full"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm"
         />
 
         {/* Search Filter Dropdown */}
         <div className="relative">
-        <SearchFilterDropdown 
-          handleFilterChange={handleFilterChange}
-          serviceTypes={serviceTypes}
-          logisticsOptions={logisticsOptions}
-          statuses={statuses}
-          paymentStatuses={paymentStatuses}
-        />
+          <SearchFilterDropdown
+            handleFilterChange={handleFilterChange}
+            serviceTypes={serviceTypes}
+            logisticsOptions={logisticsOptions}
+            statuses={statuses}
+            paymentStatuses={paymentStatuses}
+          />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-4">
-        
+      <div className="mt-4 flex flex-wrap gap-2">
         {/* Filter badges */}
         {serviceFilter.map((filterType, index) => (
           <div
             key={filterType}
-            className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-gray-700"
+            className="flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700"
           >
             {filterType}
             <button
-              onClick={() => setServiceFilter((prev) => prev.filter((type) => type !== filterType))}
+              onClick={() =>
+                setServiceFilter((prev) =>
+                  prev.filter((type) => type !== filterType)
+                )
+              }
               className="ml-2 text-gray-500 hover:text-gray-700"
             >
               <X className="h-4 w-4" />
@@ -240,9 +265,7 @@ export default function OrderHistory() {
         ))}
 
         {logisticsFilter && (
-          <div
-            className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-gray-700"
-          >
+          <div className="flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700">
             {logisticsFilter}
             <button
               onClick={() => setLogisticsFilter(null)}
@@ -254,9 +277,7 @@ export default function OrderHistory() {
         )}
 
         {statusFilter && (
-          <div
-            className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-gray-700"
-          >
+          <div className="flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700">
             {statusFilter}
             <button
               onClick={() => setStatusFilter(null)}
@@ -268,9 +289,7 @@ export default function OrderHistory() {
         )}
 
         {paymentStatusFilter && (
-          <div
-            className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-gray-700"
-          >
+          <div className="flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700">
             {paymentStatusFilter}
             <button
               onClick={() => setPaymentStatusFilter(null)}
@@ -284,19 +303,23 @@ export default function OrderHistory() {
         {/* Clear all filters Button */}
         <Button
           onClick={clearFilters}
-          disabled={!filter && serviceFilter.length === 0 && !logisticsFilter && !statusFilter && !paymentStatusFilter}
-          className={`ml-2 ${filter || serviceFilter.length > 0 || logisticsFilter || statusFilter || paymentStatusFilter ? "bg-[#DBEAFF] text-gray-800 hover:bg-blue-300" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-          >
+          disabled={
+            !filter &&
+            serviceFilter.length === 0 &&
+            !logisticsFilter &&
+            !statusFilter &&
+            !paymentStatusFilter
+          }
+          className={`ml-2 ${filter || serviceFilter.length > 0 || logisticsFilter || statusFilter || paymentStatusFilter ? "bg-[#DBEAFF] text-gray-800 hover:bg-blue-300" : "cursor-not-allowed bg-gray-300 text-gray-500"}`}
+        >
           Clear All
         </Button>
       </div>
 
-      <div className="border border-gray-300 shadow-lg rounded-2xl overflow-hidden mt-6 p-4">
-      {/* Table */}
-      <OrderHistoryTable orders={filteredOrders} />
+      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-300 p-4 shadow-lg">
+        {/* Table */}
+        <OrderHistoryTable orders={filteredOrders} />
+      </div>
     </div>
-
-    </div>
-    </ProtectedRouteWrapper>
   );
 }
