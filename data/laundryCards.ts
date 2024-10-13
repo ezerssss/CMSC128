@@ -1,33 +1,25 @@
-import { ServicesEnum } from "@/app/enums/services";
-import { LaundryCardInterface } from "@/app/types/client/item";
+import { BoardStatusEnum } from "@/app/enums/board";
+import { PaymentStatusEnum } from "@/app/enums/payment";
+import { LogisticsEnum, ServicesEnum } from "@/app/enums/services";
+import { OrderType } from "@/app/types/client/item";
+import { Timestamp } from "firebase/firestore";
 
-export const tempLaundryCardData: LaundryCardInterface[] = [
+export const tempLaundryCardData: OrderType[] = [
   {
-    id: "1",
+    orderID: "1",
+    shopID: "1",
     name: "Ezra Magbanua",
-    address: "Balay Lampirong, UPV, Miagao, Iloilo, Philippines",
+    address: null,
+    services: [ServicesEnum.DRY],
+    logistics: LogisticsEnum.PICK_UP,
     bag: "Blue Duffle Bag",
-    kilos: 7,
-    services: [
-      ServicesEnum.DELIVER,
-      ServicesEnum.DRY,
-      ServicesEnum.PICKUP,
-      ServicesEnum.WASH,
-    ],
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    address: "Balay Lampirong, UPV, Miagao, Iloilo, Philippines",
-    bag: "Red Duffle Bag",
-    kilos: 7,
-    services: [ServicesEnum.PICKUP, ServicesEnum.WASH],
-  },
-  {
-    id: "3",
-    name: "Robert Donald",
-    bag: "Green Suitcase",
-    kilos: 12,
-    services: [ServicesEnum.WASH],
+    weight: 7,
+    price: 100,
+    paymentStatus: PaymentStatusEnum.UNPAID,
+    boardStatus: BoardStatusEnum.TO_BE_PICKED_UP,
+    progressText: "In progress",
+    dateCreated: Timestamp.now(),
+    dateModified: Timestamp.now(),
+    dateFinished: null,
   },
 ];

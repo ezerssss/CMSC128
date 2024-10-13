@@ -1,7 +1,7 @@
 "use client";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { PuffLoader } from "react-spinners";
 import clientAuth from "@/app/firebase/clientAuth";
 import { Button } from "./ui/button";
@@ -15,7 +15,8 @@ import { collection, doc, getDoc } from "firebase/firestore";
 const usersCollectionRef = collection(clientDb, "users");
 
 interface PropsInterface {
-  children: React.ReactNode;
+  className?: string;
+  children: ReactNode;
   delay?: boolean;
 }
 
@@ -45,7 +46,7 @@ function ProtectedRouteWrapper(props: PropsInterface) {
   }, [props.delay]);
 
   const content: JSX.Element = isAuthenticated ? (
-    <>{props.children}</>
+    <div className={props.className}>{props.children}</div>
   ) : (
     <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
       <Link href={`/login?backTo=${path}`}>

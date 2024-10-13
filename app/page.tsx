@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Board from "@/components/kanban";
 import React from "react";
 import ProtectedRouteWrapper from "@/components/ProtectedRouteWrapper";
 import useShopID from "./store";

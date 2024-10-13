@@ -24,11 +24,21 @@ export const OrderSchema = z.object({
 
 export type OrderType = z.infer<typeof OrderSchema>;
 
-export interface LaundryCardInterface {
-  id: string;
-  name: string;
-  address?: string;
-  bag: string;
-  kilos: number;
-  services: ServicesEnum[];
-}
+export const NewOrderFormSchema = z.object({
+  name: z.string().min(1),
+  address: z.string(),
+  services: z
+    .nativeEnum(ServicesEnum)
+    .array()
+    .min(1, { message: "Select at least one service" }),
+  logistics: z.nativeEnum(LogisticsEnum, {
+    message: "Select at least one logistic option",
+  }),
+  bag: z.string().min(1),
+  weight: z.coerce.number().positive(),
+  price: z.coerce.number().nonnegative(),
+  paymentStatus: z.nativeEnum(PaymentStatusEnum),
+  boardStatus: z.nativeEnum(BoardStatusEnum),
+});
+
+export type NewOrderFormType = z.infer<typeof NewOrderFormSchema>;
