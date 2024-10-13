@@ -7,7 +7,6 @@ function HomePage() {
   return (
     <ProtectedRouteWrapper delay>
       <main className="h-full w-screen p-5">
-        <Board />
         <div className="mt-8">
           <Link
             href="/login"
