@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { OrderType } from "@/app/types/client/item";
 import { tempLaundryCardData } from "@/data/laundryCards";
 import Column from "./Column";
 import NewOrder from "./NewOrder";
+import useShopID from "@/app/store";
+import { collection, onSnapshot } from "firebase/firestore";
+import clientDb from "@/app/firebase/clientDB";
 
 interface BoardDataInterface {
   [key: string]: OrderType[];
@@ -54,14 +57,50 @@ function handleDragEnd(
 }
 
 export default function Board() {
+  const { shopID } = useShopID();
+
   const [orders, setOrders] = useState<BoardDataInterface>({
-    "to-be-picked-up": tempLaundryCardData,
+    "to-be-picked-up": [],
     idle: [],
-    cleaning: [],
+    "in-progress": [],
     "to-be-delivered": [],
     "waiting-for-customer": [],
     done: [],
   });
+
+  useEffect(() => {
+    if (!shopID) {
+      return;
+    }
+
+    const ordersCollectionRef = collection(clientDb, "shops", shopID, "orders");
+
+    // Generate the orders state
+    const unsub = onSnapshot(ordersCollectionRef, (snapshot) => {
+      let updatedBoardState: BoardDataInterface = {
+        "to-be-picked-up": [],
+        idle: [],
+        "in-progress": [],
+        "to-be-delivered": [],
+        "waiting-for-customer": [],
+        done: [],
+      };
+
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data() as OrderType;
+
+        // The fuck sometimes it sees an empty document ROFL
+        // Band-aid as of now
+        if (data.boardStatus) {
+          updatedBoardState[data.boardStatus].push(data);
+        }
+      });
+
+      setOrders(updatedBoardState);
+    });
+
+    return () => unsub();
+  }, [shopID]);
 
   return (
     <>
@@ -75,7 +114,11 @@ export default function Board() {
             items={orders["to-be-picked-up"]}
           />
           <Column title="Idle" id="idle" items={orders["idle"]} />
-          <Column title="Cleaning" id="cleaning" items={orders["cleaning"]} />
+          <Column
+            title="In Progress"
+            id="in-progress"
+            items={orders["in-progress"]}
+          />
           <Column
             title="To be Delivered"
             id="to-be-delivered"

@@ -2,12 +2,12 @@ import { create } from "zustand";
 
 type Store = {
   shopID: string | null;
-  setShopID: (storeID: string) => void;
+  setShopID: (shopID: string) => void;
 };
 
 const useShopID = create<Store>((set) => ({
   shopID: null,
-  setShopID: (storeID) => set(() => ({ shopID: storeID })),
+  setShopID: (shopID) => set(() => ({ shopID })),
 }));
 
 export default useShopID;

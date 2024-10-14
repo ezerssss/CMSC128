@@ -25,8 +25,8 @@ export const BoardStatusOptions = [
   },
   { label: "Idle", value: BoardStatusEnum.IDLE },
   {
-    label: "Cleaning",
-    value: BoardStatusEnum.CLEANING,
+    label: "In Progress",
+    value: BoardStatusEnum.IN_PROGRESS,
   },
   {
     label: "To be Delivered",

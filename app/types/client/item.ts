@@ -3,6 +3,7 @@ import { LogisticsEnum, ServicesEnum } from "../../enums/services";
 import { Timestamp } from "firebase/firestore";
 import { BoardStatusEnum } from "@/app/enums/board";
 import { PaymentStatusEnum } from "@/app/enums/payment";
+import { TrackingStatusEnum } from "@/app/enums/tracking";
 
 export const OrderSchema = z.object({
   orderID: z.string().min(1),
@@ -16,7 +17,7 @@ export const OrderSchema = z.object({
   price: z.number().nonnegative(),
   paymentStatus: z.nativeEnum(PaymentStatusEnum),
   boardStatus: z.nativeEnum(BoardStatusEnum),
-  progressText: z.string().min(1),
+  trackingStatus: z.nativeEnum(TrackingStatusEnum),
   dateCreated: z.instanceof(Timestamp),
   dateModified: z.instanceof(Timestamp),
   dateFinished: z.instanceof(Timestamp).nullable(),
