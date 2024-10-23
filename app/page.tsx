@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import ProtectedRouteWrapper from "@/components/ProtectedRouteWrapper";
-import useShopID from "./store";
+import useShopID from "@/app/store";
 
 function HomePage() {
   const { shopID } = useShopID();
@@ -22,7 +22,7 @@ function HomePage() {
 
         <div className="mt-8">
           <Link
-            href="/tracker"
+            href="/trackOrder"
             className="rounded-md bg-blue-500 px-6 py-3 text-white transition hover:bg-blue-700"
           >
             Laundry Tracker
