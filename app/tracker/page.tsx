@@ -5,6 +5,7 @@ import "./Tracker.css";
 import { ShoppingCart, Settings, Package, Check } from "lucide-react";
 import { generateTrackingNumber } from "@/lib/utils";
 
+
 const status = [
   "Confirmed Order", 
   "In Progress", 
@@ -26,6 +27,24 @@ const icons = [
   <Check size={50} />
 ]; 
 
+const censorName = (name: string) => {
+  const parts = name.split(" ");
+  return parts
+    .map(part => 
+      part.length <= 2 
+        ? part 
+        : part[0] + "*".repeat(part.length - 2) + part[part.length - 1]
+    )
+    .join(" ");
+};
+
+const paymentStatus = "Paid";
+
+const customerDetails = {
+  name: censorName("Joshua Hong"),
+  weight: "7kg",
+  price: "P80"
+};
 export default function Tracker () {  
 
   const [currentStatus, setCurrentStatus] = useState(0);
@@ -74,32 +93,40 @@ export default function Tracker () {
           <p className="font-normal bg-white text-[20px] text-center text-[#173563] p-[10px] rounded-[10px] shadow-2xl">
             <strong>{trackingNumber}</strong>
           </p>
+
+
+          <div className="text-left text-[#173563] mt-2 ml-4 p-[10px] rounded-[10px] w-fit">
+            <p className="text-lg"><strong>Customer:</strong> {customerDetails.name}</p>
+            <p><strong>Payment Status:</strong> {paymentStatus}</p>
+            <p><strong>Weight:</strong> {customerDetails.weight}</p>
+            <p><strong>Price:</strong> {customerDetails.price}</p>
+          </div>
+
         </div>
+        
 
         <div className="text-left overflow-y-auto mt-[30px]">
           {orderHistory.map((order, index) => (
-            <div 
-            key={order.message} 
-              className="relative flex"
-            >
-              <div className="flex flex-col items-center mr-5">
-                <div className={`bullet ${index <= currentStatus ? 'active' : ""}`}></div>
-                {index < orderHistory.length - 1 && <div className="line"></div>}
-              </div>
+            <div key={order.message} className="relative flex justify-end">
               <div>
-                <p className="font-normal text-[12.5px] text-[#173563]">
-                  <strong>{order.status}</strong> - {order.message}
+                <p className="font-normal text-[12.5px] text-[#173563] text-right">
+                {order.message} - <strong>{order.status}</strong> 
                 </p>
-                <p className="font-normal text-[12.5px] text-[#173563] mb-5">
+                <p className="font-normal text-[12.5px] text-[#173563] mb-5 text-right">
                   {order.date} | {order.time}
                 </p>
+              </div>
+              <div className="flex flex-col items-center ml-5">
+                <div className={`bullet ${index <= currentStatus ? 'active' : ""}`}></div>
+                {index < orderHistory.length - 1 && <div className="line"></div>}
               </div>
             </div>
           ))}
         </div>
+
       </div>
 
-      <div className="fixed bottom-[290px] flex justify-between mt-[20px]">
+      <div className="fixed bottom-[260px] flex justify-between mt-[50px]">
         {status.map((status, index) => (
           <div
             key={index}
