@@ -8,12 +8,20 @@ import { getTrackingStatusMessage } from "@/lib/tracking";
 import { doc, onSnapshot } from "firebase/firestore";
 import clientDb from "@/app/firebase/clientDB";
 import { useSearchParams } from "next/navigation";
+import { censorName } from "@/lib/utils";
 
 const icons = {
   [TrackingStatusEnum.CONFIRMED_ORDER]: <ShoppingCart size={43} />,
   [TrackingStatusEnum.IN_PROGRESS]: <Settings size={46} />,
   [TrackingStatusEnum.WAITING_FOR_PICKUP]: <Package size={48} />,
   [TrackingStatusEnum.DONE]: <Check size={50} />,
+};
+
+const paymentStatus = "Paid";
+const customerDetails = {
+  name: censorName("Joshua Hong"),
+  weight: "7kg",
+  price: "P80",
 };
 
 export default function Tracker() {
@@ -69,25 +77,44 @@ export default function Tracker() {
           <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
             <strong>{orderID}</strong>
           </p>
+          <div className="ml-4 mt-2 w-fit rounded-[10px] p-[10px] text-left text-[#173563]">
+            <p className="text-lg">
+              <strong>Customer:</strong> {customerDetails.name}
+            </p>
+            <p>
+              <strong>Payment Status:</strong> {paymentStatus}
+            </p>
+            <p>
+              <strong>Weight:</strong> {customerDetails.weight}
+            </p>
+            <p>
+              <strong>Price:</strong> {customerDetails.price}
+            </p>
+          </div>
         </div>
 
         <div className="mt-[30px] overflow-y-auto text-left">
           {orderHistory.length > 0 ? (
             orderHistory.map((order, index) => (
-              <div key={index} className="relative flex">
-                <div
-                  className={`bullet ${statusArray.indexOf(order.status) <= statusArray.indexOf(currentStatus) ? "active" : ""}`}
-                ></div>
-                {index < orderHistory.length - 1 && (
-                  <div className="line"></div>
-                )}
+              <div key={order.message} className="relative flex justify-end">
                 <div>
-                  <p className="text-[12.5px] font-normal text-[#173563]">
-                    <strong>{order.status}</strong> - {order.message}
+                  {/* Status Message and Status */}
+                  <p className="text-right text-[12.5px] font-normal text-[#173563]">
+                    {order.message} - <strong>{order.status}</strong>
                   </p>
-                  <p className="mb-5 text-[12.5px] font-normal text-[#173563]">
+
+                  {/* Date and Time */}
+                  <p className="mb-5 text-right text-[12.5px] font-normal text-[#173563]">
                     {order.date} | {order.time}
                   </p>
+                </div>
+                <div className="ml-5 flex flex-col items-center">
+                  <div
+                    className={`bullet ${index <= statusArray.indexOf(currentStatus) ? "active" : ""}`}
+                  ></div>
+                  {index < orderHistory.length - 1 && (
+                    <div className="line"></div>
+                  )}
                 </div>
               </div>
             ))
