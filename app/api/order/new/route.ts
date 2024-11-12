@@ -2,7 +2,7 @@ import serverDb from "@/app/firebase/serverDB";
 import { UserDataType } from "@/app/types/server/auth";
 import { NewOrderRequestSchema, OrderType } from "@/app/types/server/item";
 import { getErrorMessage } from "@/lib/error";
-import { getTrackingStatusFromBoardStatus } from "@/lib/tracking";
+import { generateTrackingStatusFromBoard } from "@/lib/tracking";
 import { Timestamp } from "firebase-admin/firestore";
 import { StatusCodes } from "http-status-codes";
 import { NextRequest, NextResponse } from "next/server";
@@ -54,18 +54,14 @@ export async function POST(request: NextRequest) {
     const orderDocumentRef = await ordersCollectionRef.add({});
     const orderID = orderDocumentRef.id;
 
-    const trackingStatus = getTrackingStatusFromBoardStatus(
-      orderData.boardStatus
-    );
+    const history = generateTrackingStatusFromBoard(orderData.boardStatus);
 
     const newOrder: OrderType = {
       ...orderData,
       orderID,
       shopID: userData.shopID,
-      trackingStatus,
+      trackingHistory: history,
       dateCreated: Timestamp.now(),
-      dateModified: Timestamp.now(),
-      dateFinished: null,
     };
 
     await orderDocumentRef.set(newOrder);

@@ -6,7 +6,7 @@ import { PuffLoader } from "react-spinners";
 import clientAuth from "@/app/firebase/clientAuth";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import useShopID from "@/app/store";
 import clientDb from "@/app/firebase/clientDB";
 import { UserDataType } from "@/app/types/client/auth";
@@ -26,6 +26,7 @@ function ProtectedRouteWrapper(props: PropsInterface) {
   const { setShopID } = useShopID();
 
   const path = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     return onAuthStateChanged(clientAuth, async (user) => {
@@ -42,6 +43,10 @@ function ProtectedRouteWrapper(props: PropsInterface) {
 
       setIsAuthenticated(!!user);
       setIsLoading(false);
+
+      if (!user) {
+        router.push("/login");
+      }
     });
   }, [props.delay]);
 
