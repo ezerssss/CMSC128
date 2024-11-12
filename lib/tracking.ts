@@ -44,3 +44,64 @@ export function generateTrackingStatusFromBoard(
 
   return history;
 }
+
+export function getTrackingStatusMessage(status: TrackingStatusEnum): string {
+  switch (status) {
+    case TrackingStatusEnum.DONE:
+      return "The customer has picked up their laundry, and the order is complete.";
+    case TrackingStatusEnum.WAITING_FOR_PICKUP:
+      return "The laundry is ready and waiting to be picked up by the customer.";
+
+    case TrackingStatusEnum.IN_PROGRESS:
+      return "The laundry is currently being washed, dried, or ironed.";
+
+    case TrackingStatusEnum.CONFIRMED_ORDER:
+    default:
+      return "The laundry order has been successfully placed.";
+  }
+}
+
+// THIS FUNCTION JUST SUCKS BRO
+export function updateTrackingStatusHistory(
+  history: TrackingHistoryType,
+  newStatus: BoardStatusEnum
+): TrackingHistoryType {
+  let updatedHistory = [...history];
+  const boardStatusToHistoryIndexMapping = {
+    "to-be-picked-up": 0,
+    idle: 0,
+    "in-progress": 1,
+    "to-be-delivered": 1,
+    "waiting-for-customer": 2,
+    done: 3,
+  };
+
+  const trackingStatusByIndex = [
+    TrackingStatusEnum.CONFIRMED_ORDER,
+    TrackingStatusEnum.IN_PROGRESS,
+    TrackingStatusEnum.WAITING_FOR_PICKUP,
+    TrackingStatusEnum.DONE,
+  ];
+
+  let latestHistoryIndex = updatedHistory.length - 1;
+  const newHistoryIndex = boardStatusToHistoryIndexMapping[newStatus];
+
+  // Progress backtracked
+  if (latestHistoryIndex > newHistoryIndex) {
+    updatedHistory[newHistoryIndex].date = Timestamp.now();
+    updatedHistory = updatedHistory.slice(0, newHistoryIndex + 1);
+  } else {
+    // Add new History
+    while (latestHistoryIndex++ < newHistoryIndex) {
+      updatedHistory.push({
+        trackingStatus: trackingStatusByIndex[latestHistoryIndex],
+        message: getTrackingStatusMessage(
+          trackingStatusByIndex[latestHistoryIndex]
+        ),
+        date: Timestamp.now(),
+      });
+    }
+  }
+
+  return updatedHistory;
+}
