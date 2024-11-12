@@ -53,3 +53,11 @@ export const NewOrderRequestSchema = z.object({
 });
 
 export type NewOrderRequestType = z.infer<typeof NewOrderRequestSchema>;
+
+export const UpdateOrderRequestSchema = z.object({
+  orderID: z.string().min(1),
+  shopID: z.string().min(1),
+  newBoardStatus: z.nativeEnum(BoardStatusEnum),
+});
+
+export type UpdateOrderRequestType = z.infer<typeof UpdateOrderRequestSchema>;

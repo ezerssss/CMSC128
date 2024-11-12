@@ -5,6 +5,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { getErrorMessage } from "@/lib/error";
 import { SignUpRequestSchema, UserDataType } from "@/app/types/server/auth";
 import { LaundryShopType } from "@/app/types/server/shop";
+import serverAuth from "@/app/firebase/serverAuth";
 
 const userCollectionRef = serverDb.collection("users");
 const shopsCollectionRef = serverDb.collection("shops");
@@ -48,6 +49,10 @@ export async function POST(request: NextRequest) {
     };
 
     await userCollectionRef.doc(user.uid).set(userProfile);
+
+    await serverAuth.updateUser(user.uid, {
+      photoURL: laundryShopImage,
+    });
 
     return NextResponse.json(
       { message: "Successfully created account." },
