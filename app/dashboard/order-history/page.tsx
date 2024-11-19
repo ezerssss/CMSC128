@@ -78,6 +78,9 @@ export default function OrderHistory() {
           matchesServiceType && order.services.includes(filter);
       }
 
+      const matchesAddress = order.address
+        ?.toLowerCase()
+        .includes(filter.toLowerCase());
       const matchesLogistics =
         !logisticsFilter || order.logistics === logisticsFilter;
       const matchesStatus = !statusFilter || order.boardStatus === statusFilter;
@@ -85,7 +88,7 @@ export default function OrderHistory() {
         !paymentStatusFilter || order.paymentStatus === paymentStatusFilter;
 
       return (
-        matchesName &&
+        (matchesName || matchesAddress) &&
         matchesServiceType &&
         matchesLogistics &&
         matchesStatus &&
