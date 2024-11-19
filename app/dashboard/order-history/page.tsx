@@ -6,176 +6,52 @@ import { Button } from "@/components/ui/button";
 import OrderHistoryTable from "./OrderHistoryTable";
 import SearchFilterDropdown from "./SearchFilterDropdown";
 import { X } from "lucide-react";
+import useOrderHistory from "@/app/hooks/useOrderHistory";
+import { LogisticsEnum, ServicesEnum } from "@/app/enums/services";
+import { BoardStatusEnum } from "@/app/enums/board";
+import { PaymentStatusEnum } from "@/app/enums/payment";
+import {
+  BoardStatusOptions,
+  LogisticsOptions,
+  PaymentOptions,
+  ServicesOptions,
+} from "@/app/constants/options";
 
-const orderData = [
-  {
-    orderId: "#001",
-    name: "Ezra Magbanua",
-    address: "Balay Lampirong, UPV, Miagao",
-    serviceType: "Dry Wash",
-    bag: "Blue Duffle Bag",
-    weight: 5,
-    logistics: "Delivery",
-    status: "To do",
-    paymentStatus: "Unpaid",
-    date: "10/09/2024",
-  },
-  {
-    orderId: "#002",
-    name: "Isabel Garcia",
-    address: "International Dormitory, UPV, Miagao",
-    serviceType: "Folded",
-    bag: "Red Backpack",
-    weight: 3,
-    logistics: "Pick-up",
-    status: "Completed",
-    paymentStatus: "Paid",
-    date: "10/08/2024",
-  },
-  {
-    orderId: "#003",
-    name: "Mark Reyes",
-    address: "Balay Gumamela, UPV, Miagao",
-    serviceType: "Press Only",
-    bag: "Yellow Tote Bag",
-    weight: 7,
-    logistics: "Delivery",
-    status: "In progress",
-    paymentStatus: "Unpaid",
-    date: "10/07/2024",
-  },
-  {
-    orderId: "#004",
-    name: "Ana Santos",
-    address: "Balay Kanlaon, UPV, Miagao",
-    serviceType: "Dry Wash",
-    bag: "Black Suitcase",
-    weight: 10,
-    logistics: "Delivery",
-    status: "Completed",
-    paymentStatus: "Paid",
-    date: "10/06/2024",
-  },
-  {
-    orderId: "#005",
-    name: "Carlos Dela Cruz",
-    address: "Balay Madyaas, UPV, Miagao",
-    serviceType: "Laundry Wash and Fold",
-    bag: "Green Gym Bag",
-    weight: 4,
-    logistics: "Pick-up",
-    status: "To do",
-    paymentStatus: "Unpaid",
-    date: "10/05/2024",
-  },
-  {
-    orderId: "#006",
-    name: "Joana Bernardo",
-    address: "Balay Kanlaon, UPV, Miagao",
-    serviceType: "Press Only",
-    bag: "Blue Backpack",
-    weight: 6,
-    logistics: "Delivery",
-    status: "Completed",
-    paymentStatus: "Paid",
-    date: "10/04/2024",
-  },
-  {
-    orderId: "#007",
-    name: "Miguel Francisco",
-    address: "Balay Kanlaon, UPV, Miagao",
-    serviceType: "Dry Wash",
-    bag: "Gray Duffle Bag",
-    weight: 8,
-    logistics: "Pick-up",
-    status: "In progress",
-    paymentStatus: "Unpaid",
-    date: "10/03/2024",
-  },
-  {
-    orderId: "#008",
-    name: "Sofia Rodriguez",
-    address: "Balay Lampirong, UPV, Miagao",
-    serviceType: "Laundry Wash and Fold",
-    bag: "Pink Suitcase",
-    weight: 5,
-    logistics: "Delivery",
-    status: "To do",
-    paymentStatus: "Unpaid",
-    date: "10/02/2024",
-  },
-  {
-    orderId: "#009",
-    name: "Josefina Cruz",
-    address: "Balay Miagao, UPV, Miagao",
-    serviceType: "Press Only",
-    bag: "Purple Backpack",
-    weight: 2,
-    logistics: "Pick-up",
-    status: "Completed",
-    paymentStatus: "Paid",
-    date: "10/01/2024",
-  },
-  {
-    orderId: "#010",
-    name: "Paolo Villanueva",
-    address: "Balay Lampirong, UPV, Miagao",
-    serviceType: "Dry Wash",
-    bag: "White Duffle Bag",
-    weight: 9,
-    logistics: "Delivery",
-    status: "In progress",
-    paymentStatus: "Unpaid",
-    date: "09/30/2024",
-  },
-];
-
-const serviceTypes = ["Dry Wash", "Folded", "Press Only"];
-const logisticsOptions = ["Pick-up", "Delivery"];
-const statuses = ["In progress", "Completed", "To do"];
-const paymentStatuses = ["Unpaid", "Paid"];
-
-const tableHeaders = [
-  "Order ID",
-  "Name",
-  "Address",
-  "Service Type",
-  "Bag",
-  "Weight (kg)",
-  "Logistics",
-  "Status",
-  "Payment Status",
-  "Date",
-];
-
-// Main
 export default function OrderHistory() {
-  // Search
+  const { orders } = useOrderHistory();
+
   const [filter, setFilter] = useState<string>("");
-  // Service Type Filter
-  const [serviceFilter, setServiceFilter] = useState<string[]>([]);
-  // Logistics Filter
-  const [logisticsFilter, setLogisticsFilter] = useState<string | null>(null);
-  // Status Filter
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  // Payment Status Filter
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string | null>(
+  const [serviceFilter, setServiceFilter] = useState<ServicesEnum[]>([]);
+  const [logisticsFilter, setLogisticsFilter] = useState<LogisticsEnum | null>(
     null
   );
+  const [statusFilter, setStatusFilter] = useState<BoardStatusEnum | null>(
+    null
+  );
+  const [paymentStatusFilter, setPaymentStatusFilter] =
+    useState<PaymentStatusEnum | null>(null);
 
   // Filter
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (value === "clear") {
       clearFilters();
-    } else if (serviceTypes.includes(value)) {
-      setServiceFilter([value]);
-    } else if (logisticsOptions.includes(value)) {
-      setLogisticsFilter(value);
-    } else if (statuses.includes(value)) {
-      setStatusFilter(value);
-    } else if (paymentStatuses.includes(value)) {
-      setPaymentStatusFilter(value);
+    } else if (
+      ServicesOptions.find(({ value: optionValue }) => optionValue == value)
+    ) {
+      setServiceFilter([...serviceFilter, value as ServicesEnum]);
+    } else if (
+      LogisticsOptions.find(({ value: optionValue }) => optionValue == value)
+    ) {
+      setLogisticsFilter(value as LogisticsEnum);
+    } else if (
+      BoardStatusOptions.find(({ value: optionValue }) => optionValue == value)
+    ) {
+      setStatusFilter(value as BoardStatusEnum);
+    } else if (
+      PaymentOptions.find(({ value: optionValue }) => optionValue == value)
+    ) {
+      setPaymentStatusFilter(value as PaymentStatusEnum);
     }
   };
 
@@ -190,20 +66,29 @@ export default function OrderHistory() {
 
   // Memoized filter
   const filteredOrders = useMemo(() => {
-    return orderData.filter((order) => {
-      const matchesName = order.name
-        .toLowerCase()
+    return orders.filter((order) => {
+      const matchesName =
+        !filter || order.name.toLowerCase().includes(filter.toLowerCase());
+
+      // Defaults to true if no service filter
+      let matchesServiceType = true;
+
+      for (let filter of serviceFilter) {
+        matchesServiceType =
+          matchesServiceType && order.services.includes(filter);
+      }
+
+      const matchesAddress = order.address
+        ?.toLowerCase()
         .includes(filter.toLowerCase());
-      const matchesServiceType =
-        serviceFilter.length === 0 || serviceFilter.includes(order.serviceType);
       const matchesLogistics =
         !logisticsFilter || order.logistics === logisticsFilter;
-      const matchesStatus = !statusFilter || order.status === statusFilter;
+      const matchesStatus = !statusFilter || order.boardStatus === statusFilter;
       const matchesPaymentStatus =
         !paymentStatusFilter || order.paymentStatus === paymentStatusFilter;
 
       return (
-        matchesName &&
+        (matchesName || matchesAddress) &&
         matchesServiceType &&
         matchesLogistics &&
         matchesStatus &&
@@ -216,6 +101,7 @@ export default function OrderHistory() {
     logisticsFilter,
     statusFilter,
     paymentStatusFilter,
+    orders,
   ]);
 
   return (
@@ -233,19 +119,13 @@ export default function OrderHistory() {
 
         {/* Search Filter Dropdown */}
         <div className="relative">
-          <SearchFilterDropdown
-            handleFilterChange={handleFilterChange}
-            serviceTypes={serviceTypes}
-            logisticsOptions={logisticsOptions}
-            statuses={statuses}
-            paymentStatuses={paymentStatuses}
-          />
+          <SearchFilterDropdown handleFilterChange={handleFilterChange} />
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {/* Filter badges */}
-        {serviceFilter.map((filterType, index) => (
+        {serviceFilter.map((filterType) => (
           <div
             key={filterType}
             className="flex items-center rounded-full bg-gray-200 px-3 py-1 text-gray-700"
@@ -300,7 +180,6 @@ export default function OrderHistory() {
           </div>
         )}
 
-        {/* Clear all filters Button */}
         <Button
           onClick={clearFilters}
           disabled={
@@ -317,7 +196,6 @@ export default function OrderHistory() {
       </div>
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-gray-300 p-4 shadow-lg">
-        {/* Table */}
         <OrderHistoryTable orders={filteredOrders} />
       </div>
     </div>
