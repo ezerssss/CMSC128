@@ -62,12 +62,12 @@ export default function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
               <TableCell className="px-4 py-2">{order.weight}</TableCell>
               <TableCell className="px-4 py-2">{order.logistics}</TableCell>
               <TableCell className="px-4 py-2">
-                <Badge className={getBadgeColor(order.boardStatus)}>
+                <Badge className={`${getBadgeColor(order.boardStatus)}`}>
                   {getBoardStatusTitle(order.boardStatus)}
                 </Badge>
               </TableCell>
               <TableCell className="px-4 py-2">
-                <Badge className={getBadgeColor(order.paymentStatus)}>
+                <Badge className={`${getBadgeColor(order.paymentStatus)}`}>
                   {order.paymentStatus}
                 </Badge>
               </TableCell>
