@@ -1,14 +1,18 @@
-export const getBadgeColor = (status: string) => {
-    switch (status) {
-      case "Completed":
-      case "Paid":
-        return "bg-green-100 text-green-700";
-      case "In progress":
-        return "bg-blue-100 text-blue-700";
-      case "Unpaid":
-      case "To do":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+import { BoardStatusEnum } from "@/app/enums/board";
+import { PaymentStatusEnum } from "@/app/enums/payment";
+
+export const getBadgeColor = (status: BoardStatusEnum | PaymentStatusEnum) => {
+  switch (status) {
+    case BoardStatusEnum.IDLE:
+    case BoardStatusEnum.TO_BE_PICKED_UP:
+    case PaymentStatusEnum.UNPAID:
+      return "bg-red-100 text-red-700";
+    case BoardStatusEnum.IN_PROGRESS:
+    case BoardStatusEnum.TO_BE_DELIVERED:
+    case BoardStatusEnum.WAITING_FOR_CUSTOMER:
+      return "bg-blue-100 text-blue-700";
+    case BoardStatusEnum.DONE:
+    case PaymentStatusEnum.PAID:
+      return "bg-green-100 text-green-700";
+  }
+};

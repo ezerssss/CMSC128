@@ -1,3 +1,4 @@
+import { BoardStatusEnum } from "@/app/enums/board";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -40,4 +41,21 @@ export function formatTime(date: Date) {
   hours = hours % 12 || 12;
 
   return `${String(hours).padStart(2, "0")}:${minutes}:${seconds} ${ampm}`;
+}
+
+export function getBoardStatusTitle(status: BoardStatusEnum): string {
+  switch (status) {
+    case BoardStatusEnum.DONE:
+      return "Done";
+    case BoardStatusEnum.IDLE:
+      return "Idle";
+    case BoardStatusEnum.IN_PROGRESS:
+      return "In Progress";
+    case BoardStatusEnum.TO_BE_DELIVERED:
+      return "To be Delivered";
+    case BoardStatusEnum.TO_BE_PICKED_UP:
+      return "To be Picked up";
+    case BoardStatusEnum.WAITING_FOR_CUSTOMER:
+      return "Waiting for customer pick up";
+  }
 }
