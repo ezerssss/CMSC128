@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import AddExpense from "./AddExpense";
 import {
   Menubar,
   MenubarContent,
@@ -8,7 +9,6 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-
 import {
   Table,
   TableHeader,
@@ -17,8 +17,6 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-
-import AddExpense from "./AddExpense";
 
 export default function ProfitTracker() {
   return (
