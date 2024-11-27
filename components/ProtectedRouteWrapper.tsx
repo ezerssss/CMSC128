@@ -17,7 +17,6 @@ const usersCollectionRef = collection(clientDb, "users");
 interface PropsInterface {
   className?: string;
   children: ReactNode;
-  delay?: boolean;
 }
 
 function ProtectedRouteWrapper(props: PropsInterface) {
@@ -30,10 +29,6 @@ function ProtectedRouteWrapper(props: PropsInterface) {
 
   useEffect(() => {
     return onAuthStateChanged(clientAuth, async (user) => {
-      if (props.delay) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-
       if (user) {
         const userDocumentRef = doc(usersCollectionRef, user.uid);
         const userData = (await getDoc(userDocumentRef)).data() as UserDataType;
@@ -48,7 +43,7 @@ function ProtectedRouteWrapper(props: PropsInterface) {
         router.push("/login");
       }
     });
-  }, [props.delay]);
+  }, []);
 
   const content: JSX.Element = isAuthenticated ? (
     <div className={props.className}>{props.children}</div>
