@@ -1,14 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import AddExpense from "./AddExpense";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
 import {
   Table,
   TableHeader,
@@ -17,124 +10,215 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import useUnpaidOrders from "@/app/hooks/useUnpaidOrders";
+import useExpense from "@/app/hooks/useExpense";
+import useRevenue from "@/app/hooks/useRevenue";
+import { twMerge } from "tailwind-merge";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Button } from "@/components/ui/button";
+import useGetChartData from "@/app/hooks/useGetChartData";
+
+const chartConfig = {
+  revenue: {
+    label: "Revenue",
+    color: "#00cc11",
+  },
+  expense: {
+    label: "Expenses",
+    color: "#dc0a0a",
+  },
+} satisfies ChartConfig;
 
 export default function ProfitTracker() {
-  return (
-    <div>
-      <h1 className="p-4 text-2xl font-bold text-[#173563]">Profit Tracker</h1>
+  const { unpaidOrders } = useUnpaidOrders();
+  const { revenue, paidOrders } = useRevenue();
+  const { totalExpenses, expenses, categoryBreakdown } = useExpense();
+  const profit = revenue - totalExpenses;
 
-      <section className="bg-[#4A6CA0] rounded-[30px] p-6 mb-6">
-        <h2 className="text-[22px] font-bold px-5 mb-4 text-white">Profit Summary</h2>
-        <div className="grid grid-cols-3 gap-4 px-10">
-          {["Revenue", "Total Expenses", "Net Profit"].map((title, index) => (
-            <div key={index} className="bg-[#94B1D1] p-4 rounded-[30px]">
-              <p className="text-sm text-white px-4">{title}</p>
-              <h3 className="text-[25px] text-white font-semibold px-4">
-                P {1500 + index * 1500}
-              </h3>
-            </div>
-          ))}
+  const { weekData, yearData, allTimeData } = useGetChartData(
+    paidOrders,
+    expenses
+  );
+  // 0 - week, 1 - year, 2 - all time
+  const [chartMode, setChartMode] = useState(0);
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <h2 className="p-4 text-xl font-bold text-[#4A6CA0]">Profit Summary</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="rounded-xl bg-[#D8EAF9] p-4">
+            <p className="text-sm text-gray-500">Total Revenue</p>
+            <h3 className="text-xl">₱{revenue}</h3>
+          </div>
+          <div className="rounded-xl bg-[#D8EAF9] p-4">
+            <p className="text-sm text-gray-500">Total Expenses</p>
+            <h3 className="text-xl">₱{totalExpenses}</h3>
+          </div>
+          <div className="rounded-xl bg-[#D8EAF9] p-4">
+            <p className="text-sm text-gray-500">Net Profit</p>
+            <h3
+              className={twMerge(
+                "text-xl",
+                profit > 0 ? "text-[#00cc11]" : "text-[#dc0a0a]"
+              )}
+            >
+              ₱{profit}
+            </h3>
+          </div>
         </div>
       </section>
 
       <section>
-        <div className="flex justify-between items-center mb-4 px-5">
-          <h2 className="text-[#4A6CA0] text-[18px] font-bold">Revenue and Expenses Overtime</h2>
-          <Menubar className="flex space-x-2">
-            {["All Time", "Year", "Week", "Day"].map((period, index) => (
-              <MenubarMenu key={index}>
-                <MenubarTrigger className="text-white text-sm bg-[#4A6CA0] px-4 py-2 rounded-md">
-                  {period}
-                </MenubarTrigger>
-                <MenubarContent className="bg-white text-black rounded-md shadow-lg">
-                  <MenubarItem></MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            ))}
-          </Menubar>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="px-4 text-xl font-bold text-[#4A6CA0]">
+            Revenue and Expenses Overtime
+          </h2>
+          <div className="flex space-x-2 text-sm text-white">
+            <Button
+              className="rounded-md bg-[#4A6CA0] px-4 py-2"
+              onClick={() => setChartMode(2)}
+            >
+              All Time
+            </Button>
+            <Button
+              className="rounded-md bg-[#4A6CA0] px-4 py-2"
+              onClick={() => setChartMode(1)}
+            >
+              Year
+            </Button>
+            <Button
+              className="rounded-md bg-[#4A6CA0] px-4 py-2"
+              onClick={() => setChartMode(0)}
+            >
+              Week
+            </Button>
+          </div>
         </div>
-        <div className="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center">
-          <p>Graph</p>
-        </div>
+        <ChartContainer
+          config={chartConfig}
+          className="max-h-[400px] min-h-[400px] w-full"
+        >
+          <BarChart
+            accessibilityLayer
+            data={
+              chartMode === 0
+                ? weekData
+                : chartMode === 1
+                  ? yearData
+                  : allTimeData
+            }
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="xLabel"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 4)}
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="expenses" fill="var(--color-expense)" radius={4} />
+            <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
+          </BarChart>
+        </ChartContainer>
       </section>
 
-      <section className="px-10">
-        <h2 className="text-[#4A6CA0] text-[18px] font-bold mt-6">Unpaid Orders</h2>
-        <div className="bg-white rounded-lg shadow-md mb-6">
+      <section>
+        <h2 className="p-4 text-xl font-bold text-[#4A6CA0]">Unpaid Orders</h2>
+        <div className="rounded-lg bg-white shadow-md">
           <Table>
             <TableHeader>
               <TableRow>
-                {["Name", "Order Amount", "Payment Due Date"].map((header, index) => (
-                  <TableHead key={index} className="px-4 py-2 font-bold text-black">
+                {["Name", "Order Amount", "Date created"].map((header) => (
+                  <TableHead
+                    key={header}
+                    className="px-4 py-2 font-bold text-black"
+                  >
                     {header}
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                {["Ezra Magbanua", "P200", "11-20-2024"].map((cell, index) => (
-                  <TableCell key={index} className="px-4 py-2">
-                    {cell}
+              {unpaidOrders.map((order) => (
+                <TableRow key={order.orderID}>
+                  <TableCell className="px-4 py-2">{order.name}</TableCell>
+                  <TableCell className="px-4 py-2">₱{order.price}</TableCell>
+                  <TableCell className="px-4 py-2">
+                    {order.dateCreated.toDate().toLocaleDateString()}
                   </TableCell>
-                ))}
-              </TableRow>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
       </section>
 
-      <section className="bg-[#4A6CA0] rounded-[30px] p-6 mb-6">
-        <div className="flex items-center gap-3 px-5 mb-4">
-          <h2 className="text-[22px] font-bold text-white">Expenses</h2>
+      <section>
+        <div className="flex items-center gap-1">
+          <h2 className="p-4 text-xl font-bold text-[#4A6CA0]">Expenses</h2>
           <AddExpense />
         </div>
-        <div className="grid grid-cols-3 gap-4 mb-6 px-10">
-          {["Daily Expense", "Weekly Expense", "Monthly Expense"].map((expense, index) => (
-            <div key={index} className="bg-[#94B1D1] p-4 rounded-[30px]">
-              <p className="text-sm text-white px-4">{expense}</p>
-              <h3 className="text-[25px] text-white font-semibold px-4">
-                P {1500 + index * 1500}
-              </h3>
-            </div>
-          ))}
-        </div>
 
-        <div className="flex flex-wrap gap-4 px-10">
-          <div className="bg-[#94B1D1] p-4 rounded-[30px] w-[32%]">
-            <h3 className="text-sm text-white px-4 mb-5">Category Breakdown</h3>
-            <ul className="px-2">
-              {["Supplies: P5000", "Labor: P6000", "Utilities: P5000"].map((item, index) => (
-                <li
-                  key={index}
-                  className="bg-[#C7D6E6] rounded-[23px] text-[#2A4978] font-semibold text-[20px] px-5 py-2 mb-3"
-                >
-                  {item}
-                </li>
-              ))}
+        <div className="flex flex-wrap gap-4">
+          <div className="w-[32%] rounded-xl bg-[#D8EAF9] p-3">
+            <h3 className="mb-3 text-lg font-semibold">Category Breakdown</h3>
+            <ul>
+              <li className="mb-3 rounded-xl bg-white px-4 py-2 text-[#2A4978]">
+                Supplies: ₱{categoryBreakdown.supplies}
+              </li>
+              <li className="mb-3 rounded-xl bg-white px-4 py-2 text-[#2A4978]">
+                Labor: ₱{categoryBreakdown.labor}
+              </li>
+              <li className="mb-3 rounded-xl bg-white px-4 py-2 text-[#2A4978]">
+                Utilities: ₱{categoryBreakdown.utilities}
+              </li>
             </ul>
           </div>
 
-          <section className="w-[66%]">
-            <h2 className="text-white text-[18px] font-bold mb-4">Expense History</h2>
-            <Table className="bg-white min-w-full table-auto overflow-hidden rounded-2xl">
+          <section className="flex-1 py-4">
+            <h3 className="mb-4 text-lg font-semibold">Expense History</h3>
+            <Table className="min-w-full table-auto overflow-hidden rounded-2xl bg-white">
               <TableHeader>
                 <TableRow>
-                  {["Title", "Amount", "Category", "Description", "Date"].map((header, index) => (
-                    <TableHead key={index} className="px-4 py-2 font-bold text-black">
-                      {header}
-                    </TableHead>
-                  ))}
+                  {["Title", "Amount", "Category", "Description", "Date"].map(
+                    (header, index) => (
+                      <TableHead
+                        key={index}
+                        className="px-4 py-2 font-bold text-black"
+                      >
+                        {header}
+                      </TableHead>
+                    )
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  {["Something", "P200", "Utilities", "N/A", "11-20-2024"].map((cell, index) => (
-                    <TableCell key={index} className="px-4 py-2">
-                      {cell}
+                {expenses.map((expense) => (
+                  <TableRow key={expense.expenseID}>
+                    <TableCell className="px-4 py-2">{expense.title}</TableCell>
+                    <TableCell className="px-4 py-2">
+                      ₱{expense.amount}
                     </TableCell>
-                  ))}
-                </TableRow>
+                    <TableCell className="px-4 py-2">
+                      {expense.category}
+                    </TableCell>
+                    <TableCell className="px-4 py-2">
+                      {expense.description || "N/A"}
+                    </TableCell>
+                    <TableCell className="px-4 py-2">
+                      {expense.date.toDate().toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </section>

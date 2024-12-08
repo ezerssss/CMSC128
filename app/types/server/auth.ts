@@ -6,7 +6,6 @@ export const SignUpRequestSchema = z.object({
   email: z.string().email(),
   laundryShopName: z.string().min(1),
   laundryShopImage: z.string().min(1, { message: "Image required" }),
-  numMachines: z.coerce.number().positive(),
 });
 
 export type SignUpRequestType = z.infer<typeof SignUpRequestSchema>;

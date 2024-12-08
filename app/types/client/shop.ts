@@ -5,7 +5,6 @@ export const LaundryShopSchema = z.object({
   shopID: z.string().min(1),
   name: z.string().min(1),
   imageURL: z.string().min(1, { message: "Image required" }),
-  numMachines: z.number().positive(),
   dateCreated: z.instanceof(Timestamp),
   dateModified: z.instanceof(Timestamp),
 });

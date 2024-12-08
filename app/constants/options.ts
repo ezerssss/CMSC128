@@ -1,4 +1,5 @@
 import { BoardStatusEnum } from "../enums/board";
+import { ExpenseTypeEnum } from "../enums/expense";
 import { PaymentStatusEnum } from "../enums/payment";
 import { LogisticsEnum, ServicesEnum } from "../enums/services";
 
@@ -16,6 +17,12 @@ export const ServicesOptions = [
 export const PaymentOptions = [
   { label: PaymentStatusEnum.PAID, value: PaymentStatusEnum.PAID },
   { label: PaymentStatusEnum.UNPAID, value: PaymentStatusEnum.UNPAID },
+];
+
+export const ExpenseTypeOptions = [
+  { label: ExpenseTypeEnum.LABOR, value: ExpenseTypeEnum.LABOR },
+  { label: ExpenseTypeEnum.SUPPLIES, value: ExpenseTypeEnum.SUPPLIES },
+  { label: ExpenseTypeEnum.UTILITIES, value: ExpenseTypeEnum.UTILITIES },
 ];
 
 export const BoardStatusOptions = [
