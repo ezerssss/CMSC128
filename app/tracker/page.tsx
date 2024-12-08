@@ -17,44 +17,50 @@ const icons = {
   [TrackingStatusEnum.DONE]: <Check size={50} />,
 };
 
-export default function Tracker() {
+function TrackerContent() {
   const { order } = useTracking();
 
   return (
-    <Suspense>
-      <div className="flex h-screen flex-col items-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
-        <div className="fixed left-[80px] mt-[30px] flex gap-[500px]">
-          <div>
-            <p className="mb-5 text-center text-[50px] font-bold text-[#173563]">
-              Tracking Order
-            </p>
-            <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
-              <strong>{order?.orderID}</strong>
-            </p>
-            <CustomerInfo order={order} />
-          </div>
-
-          <TrackingHistory order={order} />
+    <div className="flex h-screen flex-col items-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
+      <div className="fixed left-[80px] mt-[30px] flex gap-[500px]">
+        <div>
+          <p className="mb-5 text-center text-[50px] font-bold text-[#173563]">
+            Tracking Order
+          </p>
+          <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
+            <strong>{order?.orderID}</strong>
+          </p>
+          <CustomerInfo order={order} />
         </div>
 
-        <div className="fixed bottom-[290px] mt-[20px] flex justify-between">
-          {statusArray.map((status, index) => (
-            <div
-              key={index}
-              className={`status-line ${order && index < order.trackingHistory.length && "active"}`}
-            >
-              <div className="status">{icons[status]}</div>
-              <p className="text-[13px] font-bold text-[#173563]">{status}</p>
-            </div>
-          ))}
-        </div>
-
-        <img
-          src="/images/tracker/basket.png"
-          alt="Basket"
-          className="fixed top-[485px] w-[1300px] items-center"
-        />
+        <TrackingHistory order={order} />
       </div>
+
+      <div className="fixed bottom-[290px] mt-[20px] flex justify-between">
+        {statusArray.map((status, index) => (
+          <div
+            key={index}
+            className={`status-line ${order && index < order.trackingHistory.length && "active"}`}
+          >
+            <div className="status">{icons[status]}</div>
+            <p className="text-[13px] font-bold text-[#173563]">{status}</p>
+          </div>
+        ))}
+      </div>
+
+      <img
+        src="/images/tracker/basket.png"
+        alt="Basket"
+        className="fixed top-[485px] w-[1300px] items-center"
+      />
+    </div>
+  );
+}
+
+export default function Tracker() {
+  return (
+    <Suspense>
+      <TrackerContent />
     </Suspense>
   );
 }
