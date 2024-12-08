@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { laundryShopName, laundryShopImage, numMachines, ...user } = data;
+    const { laundryShopName, laundryShopImage, ...user } = data;
 
     // Create laundry shop profile
     const laundryShopDocumentRef = await shopsCollectionRef.add({});
@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
       shopID: laundryShopID,
       name: laundryShopName,
       imageURL: laundryShopImage,
-      numMachines,
       dateCreated: Timestamp.now(),
       dateModified: Timestamp.now(),
     };

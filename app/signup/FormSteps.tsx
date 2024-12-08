@@ -150,24 +150,6 @@ export function FormStepTwo(
           </FormItem>
         )}
       />
-      <FormField
-        control={form.control}
-        name="numMachines"
-        render={({ field }) => (
-          <FormItem className="space-y-1">
-            <FormLabel>Number of Machines</FormLabel>
-            <FormControl>
-              <Input
-                {...field}
-                type="number"
-                placeholder="Enter number of machines"
-                className="rounded-lg"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </>
   );
 }

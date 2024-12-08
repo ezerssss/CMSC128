@@ -195,7 +195,7 @@ export default function OrderHistory() {
         </Button>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-300 p-4 shadow-lg">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-300 shadow-lg">
         <OrderHistoryTable orders={filteredOrders} />
       </div>
     </div>

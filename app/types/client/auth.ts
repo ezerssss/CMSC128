@@ -14,7 +14,6 @@ export const SignUpFormSchema = z
       .string()
       .min(1, { message: "Laundry Shop Name should not be empty" }),
     laundryShopImage: z.string().min(1, { message: "Image required" }),
-    numMachines: z.coerce.number().positive(),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {

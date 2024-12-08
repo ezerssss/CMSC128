@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { OrderType } from "../types/client/item";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import clientDb from "../firebase/clientDB";
 import useShopID from "../store";
 
-function useOrderHistory() {
+function useUnpaidOrders() {
   const { shopID } = useShopID();
 
-  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [unpaidOrders, setUnpaidOrders] = useState<OrderType[]>([]);
 
   useEffect(() => {
     if (!shopID) {
@@ -15,8 +15,12 @@ function useOrderHistory() {
     }
 
     const orderCollectionRef = collection(clientDb, "shops", shopID, "orders");
+    const unpaidOrderQuery = query(
+      orderCollectionRef,
+      where("paymentStatus", "==", "Unpaid")
+    );
 
-    const unsub = onSnapshot(orderCollectionRef, (snapshot) => {
+    const unsub = onSnapshot(unpaidOrderQuery, (snapshot) => {
       const updatedOrders: OrderType[] = [];
 
       snapshot.docs.forEach((doc) => {
@@ -24,13 +28,13 @@ function useOrderHistory() {
         updatedOrders.push(data);
       });
 
-      setOrders(updatedOrders);
+      setUnpaidOrders(updatedOrders);
     });
 
     return () => unsub();
   }, [shopID]);
 
-  return { orders };
+  return { unpaidOrders };
 }
 
-export default useOrderHistory;
+export default useUnpaidOrders;

@@ -59,3 +59,30 @@ export function getBoardStatusTitle(status: BoardStatusEnum): string {
       return "Waiting for customer pick up";
   }
 }
+
+export function getInputDateLocaleDefaultValue(date: Date) {
+  const localDate =
+    date.getFullYear() +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getDate()).padStart(2, "0");
+
+  return localDate;
+}
+
+export function getStartOfWeek(date: Date): Date {
+  const startOfWeek = new Date(date);
+  const day = startOfWeek.getDay();
+  const diff = startOfWeek.getDate() - day;
+  startOfWeek.setDate(diff);
+  startOfWeek.setHours(0, 0, 0, 0);
+  return startOfWeek;
+}
+
+export function getEndOfWeek(startOfWeek: Date): Date {
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
+  endOfWeek.setHours(23, 59, 59, 999);
+  return endOfWeek;
+}

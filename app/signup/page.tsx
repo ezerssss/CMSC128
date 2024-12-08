@@ -46,7 +46,6 @@ export default function SignupPage() {
       confirmPassword: "",
       laundryShopName: "",
       laundryShopImage: "",
-      numMachines: 1,
     },
     disabled: isLoading,
   });

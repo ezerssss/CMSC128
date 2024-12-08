@@ -100,8 +100,8 @@ function NewOrder() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger>
-        <Button className="mt-5">New order</Button>
+      <DialogTrigger className="mt-5">
+        <Button>New order</Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
@@ -200,6 +200,7 @@ function NewOrder() {
                           isMulti
                           className="h-9"
                           ref={ref}
+                          isDisabled={isLoading}
                           value={ServicesOptions.filter((c) =>
                             value.includes(c.value)
                           )}
@@ -221,6 +222,7 @@ function NewOrder() {
                         <Select
                           className="h-9"
                           ref={ref}
+                          isDisabled={isLoading}
                           value={LogisticsOptions.find(
                             (c) => c.value === value
                           )}
@@ -242,6 +244,7 @@ function NewOrder() {
                         <Select
                           className="h-9"
                           ref={ref}
+                          isDisabled={isLoading}
                           value={PaymentOptions.find((c) => c.value === value)}
                           onChange={(val) => onChange(val?.value)}
                           options={PaymentOptions}
@@ -261,6 +264,7 @@ function NewOrder() {
                         <Select
                           className="h-9"
                           ref={ref}
+                          isDisabled={isLoading}
                           value={BoardStatusOptions.find(
                             (c) => c.value === value
                           )}
