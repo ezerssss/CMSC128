@@ -9,7 +9,6 @@ import {
   CardFooter,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import Image from "next/image";
 import { LoginFormSchema, LoginFormType } from "../types/client/auth";
@@ -127,24 +126,6 @@ function LoginContent() {
                     </FormItem>
                   )}
                 />
-
-                <div className="mt-4 flex w-full items-center justify-between">
-                  <div className="flex items-center">
-                    <Checkbox id="rememberMe" checked />
-                    <label
-                      htmlFor="rememberMe"
-                      className="ml-1 cursor-pointer text-sm text-gray-700"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-blue-500 hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
               </CardContent>
 
               <CardFooter className="flex flex-col items-center space-y-4">
