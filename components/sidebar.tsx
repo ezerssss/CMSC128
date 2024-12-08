@@ -53,16 +53,6 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-[#17356340] pt-2">
-        <Link href="/settings" passHref>
-          <div
-            className={`relative flex w-full cursor-pointer items-center space-x-4 p-4 pl-6 transition-all hover:bg-[#EFF5FF] ${pathname === "/settings" ? "border-l- border-[#173563] bg-[#cfe6f8] text-[#173563]" : ""}`}
-          >
-            <Settings className="text-[#173563]" />
-            <span>Settings</span>
-          </div>
-        </Link>
-
         <div className="mt-2 flex items-center justify-between rounded-md bg-[#EFF5FF] p-4 shadow-inner">
           <div className="flex items-center space-x-2">
             <Avatar className="h-10 w-10">
@@ -82,6 +72,5 @@ export function Sidebar() {
           </button>
         </div>
       </div>
-    </div>
   );
 }

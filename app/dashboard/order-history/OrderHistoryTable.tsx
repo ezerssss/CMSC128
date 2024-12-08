@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import React from "react";
 import {
   Table,
   TableHeader,
@@ -12,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { getBadgeColor } from "@/lib/colors";
 import { OrderType } from "@/app/types/client/item";
 import { getBoardStatusTitle } from "@/lib/utils";
+
 
 interface OrderHistoryTableProps {
   orders: OrderType[];
@@ -50,7 +53,14 @@ export default function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
         {orders.length > 0 ? (
           orders.map((order) => (
             <TableRow key={order.orderID} className="border-b border-gray-200">
-              <TableCell className="px-2 py-2 text-[12px]">{order.orderID}</TableCell>
+              <TableCell className="px-2 py-2 text-[12px]">
+                <Link
+                    href={`/tracker?shopID=${order.shopID}&orderID=${order.orderID}`}
+                    className="font-bold text-[#173563] underline"
+                >
+                    {order.orderID}
+                </Link>
+              </TableCell>
               <TableCell className="px-4 py-2">{order.name}</TableCell>
               <TableCell className="px-4 py-2">{order.address}</TableCell>
               <TableCell className="px-4 py-2">
