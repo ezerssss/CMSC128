@@ -333,7 +333,7 @@ function EditOrder(props: PropsInterface) {
                 <Button
                   type="button"
                   variant="destructive"
-                  className="mr-2 bg-red-500"
+                  className="mr-3 bg-red-500"
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader2 className="animate-spin" /> : "Delete"}
