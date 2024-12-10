@@ -10,10 +10,11 @@ import { HomeIcon, ScaleIcon, ShoppingBagIcon } from "lucide-react";
 interface PropsInterface {
   item: OrderType;
   index: number;
+  handleCardClick: (item: OrderType) => void;
 }
 
 export default function LaundryCard(props: PropsInterface) {
-  const { item, index } = props;
+  const { item, index, handleCardClick } = props;
 
   return (
     <Draggable draggableId={item.orderID} index={index}>
@@ -26,6 +27,7 @@ export default function LaundryCard(props: PropsInterface) {
             snapshot.isDragging ? "bg-slate-50" : "bg-white",
             "mb-5 h-fit min-h-[190px] w-full select-none rounded-xl p-[10px]"
           )}
+          onClick={() => handleCardClick(item)}
         >
           <p className="text-large mb-[6px] font-semibold">{item.name}</p>
 
@@ -59,7 +61,7 @@ export default function LaundryCard(props: PropsInterface) {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-[6px]">
-            {item.services.sort().map((service) => (
+            {item.services.toSorted().map((service) => (
               <div
                 className="flex h-5 w-12 items-center justify-center rounded-2xl bg-[#173563] text-[10px] font-bold text-white"
                 key={`${service}-${item.orderID}`}

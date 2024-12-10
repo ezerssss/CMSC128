@@ -51,3 +51,52 @@ export const NewOrderFormSchema = z.object({
 });
 
 export type NewOrderFormType = z.infer<typeof NewOrderFormSchema>;
+
+export const EditOrderRequestSchema = z.object({
+  userID: z.string().min(1),
+  orderID: z.string().min(1),
+  shopID: z.string().min(1),
+  orderData: z.object({
+    name: z.string().min(1),
+    address: z.string(),
+    services: z
+      .nativeEnum(ServicesEnum)
+      .array()
+      .min(1, { message: "Select at least one service" }),
+    logistics: z.nativeEnum(LogisticsEnum, {
+      message: "Select at least one logistic option",
+    }),
+    bag: z.string().min(1),
+    weight: z.coerce.number().positive(),
+    price: z.coerce.number().nonnegative(),
+    paymentStatus: z.nativeEnum(PaymentStatusEnum),
+  }),
+});
+
+export type EditOrderRequestType = z.infer<typeof EditOrderRequestSchema>;
+
+export const EditOrderFormSchema = z.object({
+  name: z.string().min(1),
+  address: z.string(),
+  services: z
+    .nativeEnum(ServicesEnum)
+    .array()
+    .min(1, { message: "Select at least one service" }),
+  logistics: z.nativeEnum(LogisticsEnum, {
+    message: "Select at least one logistic option",
+  }),
+  bag: z.string().min(1),
+  weight: z.coerce.number().positive(),
+  price: z.coerce.number().nonnegative(),
+  paymentStatus: z.nativeEnum(PaymentStatusEnum),
+});
+
+export type EditOrderFormType = z.infer<typeof EditOrderFormSchema>;
+
+export const DeleteOrderRequestSchema = z.object({
+  userID: z.string().min(1),
+  orderID: z.string().min(1),
+  shopID: z.string().min(1),
+});
+
+export type DeleteOrderRequestType = z.infer<typeof DeleteOrderRequestSchema>;

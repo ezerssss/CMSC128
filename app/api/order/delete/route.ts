@@ -1,18 +1,14 @@
 import serverDb from "@/app/firebase/serverDB";
 import { UserDataType } from "@/app/types/server/auth";
-import { NewOrderRequestSchema, OrderType } from "@/app/types/server/item";
+import { DeleteOrderRequestSchema } from "@/app/types/server/item";
 import { getErrorMessage } from "@/lib/error";
-import { generateTrackingStatusFromBoard } from "@/lib/tracking";
-import { Timestamp } from "firebase-admin/firestore";
 import { StatusCodes } from "http-status-codes";
 import { NextRequest, NextResponse } from "next/server";
-
-const usersCollectionRef = serverDb.collection("users");
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  const { data, error } = NewOrderRequestSchema.safeParse(body);
+  const { data, error } = DeleteOrderRequestSchema.safeParse(body);
 
   if (error) {
     console.error(error);
@@ -22,11 +18,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { userID, ...orderData } = data;
+  const { shopID, orderID, userID } = data;
 
   try {
     // Check if user actually exists
-    const userDocRef = usersCollectionRef.doc(data.userID);
+    const usersCollectionRef = serverDb.collection("users");
+    const userDocRef = usersCollectionRef.doc(userID);
     const user = await userDocRef.get();
 
     if (!user.exists) {
@@ -39,34 +36,43 @@ export async function POST(request: NextRequest) {
     const userData = user.data() as UserDataType;
 
     // Verify if shopID is actually the user's shop
-    if (userData.shopID != data.shopID) {
+    if (userData.shopID !== data.shopID) {
       return NextResponse.json(
         { message: "Shop ID doesn't match" },
         { status: StatusCodes.BAD_REQUEST, statusText: "Shop ID doesn't match" }
       );
     }
 
-    // Add new order to database
-    const ordersCollectionRef = serverDb
-      .collection("shops")
-      .doc(userData.shopID)
-      .collection("orders");
-    const orderDocumentRef = await ordersCollectionRef.add({});
-    const orderID = orderDocumentRef.id;
+    const shopDocRef = serverDb.collection("shops").doc(shopID);
+    const shopDoc = await shopDocRef.get();
 
-    const history = generateTrackingStatusFromBoard(orderData.boardStatus);
+    if (!shopDoc.exists) {
+      return NextResponse.json(
+        { message: "Shop doesn't exist" },
+        {
+          status: StatusCodes.NOT_FOUND,
+          statusText: "Shop doesn't exist",
+        }
+      );
+    }
 
-    const newOrder: OrderType = {
-      ...orderData,
-      orderID,
-      shopID: userData.shopID,
-      trackingHistory: history,
-      dateCreated: Timestamp.now(),
-    };
+    const orderDocRef = shopDocRef.collection("orders").doc(orderID);
+    const orderDoc = await orderDocRef.get();
 
-    await orderDocumentRef.set(newOrder);
+    if (!orderDoc.exists) {
+      return NextResponse.json(
+        { message: "Order doesn't exist" },
+        {
+          status: StatusCodes.NOT_FOUND,
+          statusText: "Order doesn't exist",
+        }
+      );
+    }
+
+    await orderDocRef.delete();
+
     return NextResponse.json(
-      { message: "Successfully created new order.", orderID },
+      { message: "Successfully deleted order." },
       { status: StatusCodes.OK }
     );
   } catch (error) {

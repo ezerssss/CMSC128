@@ -27,9 +27,11 @@ function TrackerContent() {
           <p className="mb-5 text-center text-[50px] font-bold text-[#173563]">
             Tracking Order
           </p>
-          <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
-            <strong>{order?.orderID}</strong>
-          </p>
+          {order?.orderID && (
+            <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
+              <strong>{order.orderID}</strong>
+            </p>
+          )}
           <CustomerInfo order={order} />
         </div>
 
@@ -39,7 +41,7 @@ function TrackerContent() {
       <div className="fixed bottom-[290px] mt-[20px] flex justify-between">
         {statusArray.map((status, index) => (
           <div
-            key={index}
+            key={status}
             className={`status-line ${order && index < order.trackingHistory.length && "active"}`}
           >
             <div className="status">{icons[status]}</div>
