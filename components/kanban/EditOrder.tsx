@@ -6,15 +6,17 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
-import { NewOrderFormSchema, NewOrderFormType } from "@/app/types/client/item";
+import {
+  DeleteOrderRequestType,
+  EditOrderFormSchema,
+  EditOrderFormType,
+  EditOrderRequestType,
+  OrderType,
+} from "@/app/types/client/item";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LogisticsEnum, ServicesEnum } from "@/app/enums/services";
-import { PaymentStatusEnum } from "@/app/enums/payment";
-import { BoardStatusEnum } from "@/app/enums/board";
 import {
   Form,
   FormControl,
@@ -26,7 +28,6 @@ import {
 import { Input } from "@/components/ui/input";
 import Select from "react-select";
 import {
-  BoardStatusOptions,
   LogisticsOptions,
   PaymentOptions,
   ServicesOptions,
@@ -35,33 +36,48 @@ import { Loader2 } from "lucide-react";
 import useShopID from "@/app/store";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/error";
-import { NewOrderRequestType } from "@/app/types/server/item";
 import useUser from "@/app/hooks/useUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import copy from "copy-to-clipboard";
 
-function NewOrder() {
-  const [isOpen, setIsOpen] = useState(false);
+interface PropsInterface {
+  order: OrderType;
+  isOpen: boolean;
+  handleOnOpenChange: (open: boolean) => void;
+}
+
+function EditOrder(props: PropsInterface) {
+  const { isOpen, handleOnOpenChange, order } = props;
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
   const { shopID } = useShopID();
 
-  const form = useForm<NewOrderFormType>({
-    resolver: zodResolver(NewOrderFormSchema),
+  const form = useForm<EditOrderFormType>({
+    resolver: zodResolver(EditOrderFormSchema),
     defaultValues: {
-      name: "",
-      address: "",
-      services: [ServicesEnum.WASH],
-      logistics: LogisticsEnum.DELIVERY,
-      bag: "",
-      weight: 1,
-      price: 100,
-      paymentStatus: PaymentStatusEnum.UNPAID,
-      boardStatus: BoardStatusEnum.TO_BE_PICKED_UP,
+      name: order.name,
+      address: order.address ?? "",
+      services: order.services,
+      logistics: order.logistics,
+      bag: order.bag,
+      weight: order.weight,
+      price: order.price,
+      paymentStatus: order.paymentStatus,
     },
     disabled: isLoading,
   });
 
-  async function onSubmit(values: NewOrderFormType) {
+  async function onSubmit(values: EditOrderFormType) {
     if (!shopID || !user) {
       // Should not happen, but just in case.
       toast.error("Necessary preconditions failed.");
@@ -71,37 +87,27 @@ function NewOrder() {
     try {
       setIsLoading(true);
 
-      const newOrderRequest: NewOrderRequestType = {
-        ...values,
+      const editOrderRequest: EditOrderRequestType = {
         userID: user.uid,
         shopID,
+        orderID: order.orderID,
+        orderData: values,
       };
 
-      const res = await fetch("/api/order/new", {
+      const res = await fetch("/api/order/edit", {
         method: "POST",
-        body: JSON.stringify(newOrderRequest),
+        body: JSON.stringify(editOrderRequest),
       });
 
       if (!res.ok) {
         throw new Error(res.statusText);
       }
 
-      const { message, orderID } = await res.json();
+      const { message } = await res.json();
 
       form.reset();
       toast.success(message);
-
-      const copySuccess = copy(
-        `https://laba-da-beta.vercel.app/tracker?orderID=${orderID}&shopID=${shopID}`
-      );
-
-      if (copySuccess) {
-        toast.success("Customer tracking link copied to your clipboard.");
-      } else {
-        toast.error("Failed to copy customer tracking link to clipboard.");
-      }
-
-      setIsOpen(false);
+      handleOnOpenChange(false);
     } catch (error) {
       console.error(error);
       toast.error(getErrorMessage(error));
@@ -110,14 +116,67 @@ function NewOrder() {
     }
   }
 
+  async function handleDelete() {
+    if (!shopID || !user) {
+      // Should not happen, but just in case.
+      toast.error("Necessary preconditions failed.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const editOrderRequest: DeleteOrderRequestType = {
+        userID: user.uid,
+        shopID,
+        orderID: order.orderID,
+      };
+
+      const res = await fetch("/api/order/delete", {
+        method: "POST",
+        body: JSON.stringify(editOrderRequest),
+      });
+
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+
+      const { message } = await res.json();
+
+      form.reset();
+      toast.success(message);
+      handleOnOpenChange(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handleCopy() {
+    const copySuccess = copy(
+      `https://laba-da-beta.vercel.app/tracker?orderID=${order.orderID}&shopID=${shopID}`
+    );
+
+    if (copySuccess) {
+      toast.success("Customer tracking link copied to your clipboard.");
+    } else {
+      toast.error("Failed to copy customer tracking link to clipboard.");
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="mt-5">
-        <Button>New order</Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">New Order</DialogTitle>
+    <Dialog open={isOpen} onOpenChange={handleOnOpenChange}>
+      <DialogContent className="max-w-[85%] md:max-w-2xl">
+        <DialogHeader className="flex justify-center gap-0">
+          <DialogTitle className="text-2xl">Edit Order</DialogTitle>
+          <button
+            className="cursor-pointer text-sm text-gray-400 underline sm:text-left"
+            onClick={handleCopy}
+          >
+            Click me to copy customer's tracking link.
+          </button>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -131,7 +190,7 @@ function NewOrder() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Enter customer's name" />
+                        <Input {...field} placeholder="Edit customer's name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -266,32 +325,49 @@ function NewOrder() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="boardStatus"
-                  render={({ field: { onChange, value, ref } }) => (
-                    <FormItem>
-                      <FormLabel>Board Status</FormLabel>
-                      <FormControl>
-                        <Select
-                          className="h-9"
-                          ref={ref}
-                          isDisabled={isLoading}
-                          value={BoardStatusOptions.find(
-                            (c) => c.value === value
-                          )}
-                          onChange={(val) => onChange(val?.value)}
-                          options={BoardStatusOptions}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="mr-2 bg-red-500"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="animate-spin" /> : "Delete"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the order and remove the data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      type="button"
+                      disabled={isLoading}
+                      className="bg-red-500 hover:bg-red-500/90"
+                      onClick={handleDelete}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Delete"
+                      )}
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <Button type="submit">
-              {isLoading ? <Loader2 className="animate-spin" /> : "Submit"}
+              {isLoading ? <Loader2 className="animate-spin" /> : "Edit"}
             </Button>
           </form>
         </Form>
@@ -300,4 +376,4 @@ function NewOrder() {
   );
 }
 
-export default NewOrder;
+export default EditOrder;
