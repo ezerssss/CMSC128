@@ -175,7 +175,7 @@ function EditOrder(props: PropsInterface) {
             className="cursor-pointer text-sm text-gray-400 underline sm:text-left"
             onClick={handleCopy}
           >
-            Click me to copy customer's tracking link.
+            Click to copy customer's tracking link.
           </button>
         </DialogHeader>
         <Form {...form}>
