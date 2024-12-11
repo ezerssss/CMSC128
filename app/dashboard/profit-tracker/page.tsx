@@ -67,7 +67,7 @@ export default function ProfitTracker() {
             <h3
               className={twMerge(
                 "text-xl",
-                profit > 0 ? "text-[#00cc11]" : "text-[#dc0a0a]"
+                profit > 0 ? "text-[#8cc485]" : "text-[#db6969]"
               )}
             >
               ₱{profit}
