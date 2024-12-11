@@ -2,11 +2,18 @@
 
 import React, { Suspense } from "react";
 import "@/app/tracker/tracker.css";
-import { ShoppingCart, Settings, Package, Check } from "lucide-react";
+import {
+  ShoppingCart,
+  Settings,
+  Package,
+  Check,
+  XCircleIcon,
+} from "lucide-react";
 import { TrackingStatusEnum } from "@/app/enums/tracking";
 import CustomerInfo from "@/components/tracker/CustomerInfo";
 import TrackingHistory from "@/components/tracker/TrackingHistory";
 import useTracking from "../hooks/useTracking";
+import { PuffLoader } from "react-spinners";
 
 const statusArray = Object.values(TrackingStatusEnum);
 
@@ -18,7 +25,25 @@ const icons = {
 };
 
 function TrackerContent() {
-  const { order } = useTracking();
+  const { order, isLoading, isEmpty } = useTracking();
+  console.log(isLoading, isEmpty);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
+        <PuffLoader color="white" />
+      </div>
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
+        <XCircleIcon size={100} color="red" />
+        <p className="text-2xl">Order doesn't exist</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col items-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">

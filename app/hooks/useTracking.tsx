@@ -9,10 +9,15 @@ function useTracking() {
   const orderID = searchParams.get("orderID");
   const shopID = searchParams.get("shopID");
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(true);
   const [order, setOrder] = useState<OrderType>();
 
   useEffect(() => {
-    if (!orderID || !shopID) return;
+    if (!orderID || !shopID) {
+      setIsLoading(false);
+      return;
+    }
 
     const orderDocRef = doc(clientDb, "shops", shopID, "orders", orderID);
 
@@ -20,13 +25,18 @@ function useTracking() {
       if (docSnapshot.exists()) {
         const orderData = docSnapshot.data() as OrderType;
         setOrder(orderData);
+        setIsEmpty(false);
+      } else {
+        setIsEmpty(true);
       }
+
+      setIsLoading(false);
     });
 
     return () => unsub();
   }, [orderID, shopID]);
 
-  return { order };
+  return { order, isLoading, isEmpty };
 }
 
 export default useTracking;
