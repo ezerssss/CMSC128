@@ -28,11 +28,11 @@ import useGetChartData from "@/app/hooks/useGetChartData";
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "#00cc11",
+    color: "#8cc485",
   },
   expense: {
     label: "Expenses",
-    color: "#dc0a0a",
+    color: "#db6969",
   },
 } satisfies ChartConfig;
 
