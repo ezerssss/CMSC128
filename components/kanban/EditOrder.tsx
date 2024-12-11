@@ -328,12 +328,16 @@ function EditOrder(props: PropsInterface) {
               </div>
             </div>
 
+            <Button type="submit" className="float-right">
+              {isLoading ? <Loader2 className="animate-spin" /> : "Save"}
+            </Button>
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
                   type="button"
                   variant="destructive"
-                  className="mr-3 bg-red-500"
+                  className="float-right mr-3 bg-red-500"
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader2 className="animate-spin" /> : "Delete"}
@@ -366,9 +370,6 @@ function EditOrder(props: PropsInterface) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button type="submit">
-              {isLoading ? <Loader2 className="animate-spin" /> : "Edit"}
-            </Button>
           </form>
         </Form>
       </DialogContent>

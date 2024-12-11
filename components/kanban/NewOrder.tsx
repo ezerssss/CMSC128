@@ -290,7 +290,7 @@ function NewOrder() {
                 />
               </div>
             </div>
-            <Button type="submit">
+            <Button type="submit" className="float-right">
               {isLoading ? <Loader2 className="animate-spin" /> : "Submit"}
             </Button>
           </form>
