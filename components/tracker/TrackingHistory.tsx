@@ -10,7 +10,7 @@ function TrackingHistory(props: PropsInterface) {
   const { order } = props;
 
   return (
-    <div className="mt-[30px] overflow-y-auto text-left">
+    <div className="fixed right-[80px] top-[58px] overflow-y-auto text-left">
       {order &&
         order.trackingHistory.length > 0 &&
         order.trackingHistory.map((history, index) => {

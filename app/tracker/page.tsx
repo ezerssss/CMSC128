@@ -47,21 +47,19 @@ function TrackerContent() {
 
   return (
     <div className="flex h-screen flex-col items-center bg-gradient-to-br from-[#A6D3EF] to-[#EFF5FF]">
-      <div className="fixed left-[80px] mt-[30px] flex gap-[500px]">
-        <div>
-          <p className="mb-5 text-center text-[50px] font-bold text-[#173563]">
-            Tracking Order
+      <div className="fixed left-[80px] top-[30px]">
+        <p className="mb-5 text-center text-[50px] font-bold text-[#173563]">
+          Tracking Order
+        </p>
+        {order?.orderID && (
+          <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
+            <strong>{order.orderID}</strong>
           </p>
-          {order?.orderID && (
-            <p className="rounded-[10px] bg-white p-[10px] text-center text-[20px] font-normal text-[#173563] shadow-2xl">
-              <strong>{order.orderID}</strong>
-            </p>
-          )}
-          <CustomerInfo order={order} />
-        </div>
-
-        <TrackingHistory order={order} />
+        )}
+        <CustomerInfo order={order} />
       </div>
+
+      <TrackingHistory order={order} />
 
       <div className="fixed bottom-[290px] mt-[20px] flex justify-between">
         {statusArray.map((status, index) => (
