@@ -28,7 +28,7 @@ import useGetChartData from "@/app/hooks/useGetChartData";
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "#8cc485",
+    color: "#78ad71",
   },
   expense: {
     label: "Expenses",
@@ -67,7 +67,7 @@ export default function ProfitTracker() {
             <h3
               className={twMerge(
                 "text-xl",
-                profit > 0 ? "text-[#8cc485]" : "text-[#db6969]"
+                profit > 0 ? "text-[#4a7d43]" : "text-[#db6969]"
               )}
             >
               ₱{profit}
